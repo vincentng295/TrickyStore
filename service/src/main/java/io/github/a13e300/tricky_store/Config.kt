@@ -23,33 +23,13 @@ import top.qwq2333.ohmykeymint.IOhMySecurityLevel
 import java.io.File
 
 object Config {
-    private val hackPackages = mutableSetOf<String>()
-    private val generatePackages = mutableSetOf<String>()
-
-    private fun updateTargetPackages(f: File?) = runCatching {
-        hackPackages.clear()
-        generatePackages.clear()
-        listOf("com.google.android.gsf", "com.google.android.gms", "com.android.vending").forEach { generatePackages.add(it) }
-        f?.readLines()?.forEach {
-            if (it.isNotBlank() && !it.startsWith("#")) {
-                val n = it.trim()
-                if (n.endsWith("!")) generatePackages.add(n.removeSuffix("!").trim())
-                else hackPackages.add(n)
-            }
-        }
-        Logger.i("update hack packages: $hackPackages, generate packages=$generatePackages")
-    }.onFailure {
-        Logger.e("failed to update target files", it)
-    }
-
     private fun updateKeyBox(f: File?) = runCatching {
         CertHack.readFromXml(f?.readText(), getOmk())
     }.onFailure {
         Logger.e("failed to update keybox", it)
     }
 
-    private const val CONFIG_PATH = "/data/adb/tricky_store"
-    private const val TARGET_FILE = "target.txt"
+    private const val CONFIG_PATH = "/system/etc/keystore"
     private const val KEYBOX_FILE = "keybox.xml"
     private const val DEV_CONFIG_FILE = "devconfig.toml"
     private val root = File(CONFIG_PATH)
@@ -63,7 +43,6 @@ object Config {
                 else -> return
             }
             when (path) {
-                TARGET_FILE -> updateTargetPackages(f)
                 KEYBOX_FILE -> updateKeyBox(f)
                 DEV_CONFIG_FILE -> parseDevConfig(f)
             }
@@ -72,12 +51,6 @@ object Config {
 
     fun initialize() {
         root.mkdirs()
-        val scope = File(root, TARGET_FILE)
-        if (scope.exists()) {
-            updateTargetPackages(scope)
-        } else {
-            Logger.e("target.txt file not found, please put it to $scope !")
-        }
         val keybox = File(root, KEYBOX_FILE)
         if (!keybox.exists()) {
             Logger.e("keybox file not found, please put it to $keybox !")
@@ -149,15 +122,13 @@ object Config {
         return getOmk()?.getOhMySecurityLevel(securityLevel)
     }
 
-    fun needHack(callingUid: Int) = kotlin.runCatching {
-        false
-    }.onFailure { Logger.e("failed to get packages", it) }.getOrNull() ?: false
+    // emulator has no tee
+    @Suppress("UNUSED_PARAMETER")
+    fun needHack(callingUid: Int) = true
 
-    fun needGenerate(callingUid: Int) = kotlin.runCatching {
-        if (generatePackages.isEmpty() && hackPackages.isEmpty()) return false
-        val ps = getPm()?.getPackagesForUid(callingUid)
-        ps?.any { it in generatePackages || it in hackPackages }
-    }.onFailure { Logger.e("failed to get packages", it) }.getOrNull() ?: false
+    // emulator has no tee
+    @Suppress("UNUSED_PARAMETER")
+    fun needGenerate(callingUid: Int) = true
 
     private val toml = Toml(
         inputConfig = TomlInputConfig(

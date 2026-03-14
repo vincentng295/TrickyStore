@@ -33,7 +33,7 @@ fun verifySelf() {
     val kv = mutableMapOf<String, String>()
     val prop = File("./module.prop")
     runCatching {
-        if (prop.canonicalPath != "/data/adb/modules/tricky_store/module.prop") error("wrong directory ${prop.canonicalPath}!")
+        if (prop.canonicalPath != "/system/etc/keystore/module.prop") error("wrong directory ${prop.canonicalPath}!")
         prop.forEachLine(Charsets.UTF_8) {
             val a = it.split("=", limit = 2)
             if (a.size != 2) return@forEachLine
