@@ -100,8 +100,3 @@ if [ ! -f "$CONFIG_DIR/keybox.xml" ]; then
   extract "$ZIPFILE" 'keybox.xml' "$TMPDIR"
   mv "$TMPDIR/keybox.xml" "$CONFIG_DIR/keybox.xml"
 fi
-if [ ! -f "$CONFIG_DIR/target.txt" ]; then
-  ui_print "- Adding default target scope"
-  extract "$ZIPFILE" 'target.txt' "$TMPDIR"
-  mv "$TMPDIR/target.txt" "$CONFIG_DIR/target.txt"
-fi
