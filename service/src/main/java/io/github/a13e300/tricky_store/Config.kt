@@ -122,13 +122,11 @@ object Config {
         return getOmk()?.getOhMySecurityLevel(securityLevel)
     }
 
-    // emulator has no tee
     @Suppress("UNUSED_PARAMETER")
     fun needHack(callingUid: Int) = true
 
-    // emulator has no tee
     @Suppress("UNUSED_PARAMETER")
-    fun needGenerate(callingUid: Int) = true
+    fun needGenerate(callingUid: Int) = false
 
     private val toml = Toml(
         inputConfig = TomlInputConfig(
