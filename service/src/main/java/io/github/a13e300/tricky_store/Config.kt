@@ -122,8 +122,7 @@ object Config {
         return getOmk()?.getOhMySecurityLevel(securityLevel)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    fun needHack(callingUid: Int) = true
+    fun needHack(callingUid: Int) = callingUid >= 10000
 
     @Suppress("UNUSED_PARAMETER")
     fun needGenerate(callingUid: Int) = false
