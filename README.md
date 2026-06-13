@@ -44,20 +44,6 @@ format:
 </AndroidAttestation>
 ```
 
-## Support TEE broken devices
-
-Tricky Store will hack the leaf certificate by default. On TEE broken devices, this will not work because we can't retrieve the leaf certificate from TEE. You can add a `!` after a package name to enable generate certificate support for this package.
-
-For example:
-
-```
-# target.txt
-# use leaf certificate hacking mode for KeyAttestation App
-io.github.vvb2060.keyattestation
-# use certificate generating mode for gms
-com.google.android.gms!
-```
-
 ## Customize security patch level 
 
 Edit the file `/data/adb/tricky_store/devconfig.toml`.
